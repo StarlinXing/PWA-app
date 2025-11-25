@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Example</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Apple PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="PWA Example">
+  <link rel="apple-touch-icon" href="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6ff112048c4b4df4bf823a3f2be33c76~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649636&x-signature=PELt4DSgXQjoZmI8YVCqfBfqp4A%3D">
+  
+  <!-- Windows PWA Support -->
+  <meta name="msapplication-TileColor" content="#2196f3">
+  <meta name="msapplication-TileImage" content="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6ff112048c4b4df4bf823a3f2be33c76~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649636&x-signature=PELt4DSgXQjoZmI8YVCqfBfqp4A%3D">
+  
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#2196f3">
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2196f3',
+            secondary: '#1976d2',
+            accent: '#03a9f4',
+            light: '#bbdefb',
+            dark: '#0d47a1'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.5s ease-in-out',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' }
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+    }
+    
+    /* Custom Styles */
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+    
+    .hero-bg {
+      background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/ef65e9a695524af4aefceba28d2c9935~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649643&x-signature=fnObapNSN1ds7ZzL9BXyIO7Gnlw%3D');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .install-prompt {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .feature-icon {
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1);
+      color: #2196f3;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md fixed w-full z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6ff112048c4b4df4bf823a3f2be33c76~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649636&x-signature=PELt4DSgXQjoZmI8YVCqfBfqp4A%3D" alt="PWA Logo" class="h-8 w-8">
+        <span class="text-xl font-bold text-primary">PWA Example</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100">
+          <i class="fa fa-moon-o text-gray-600"></i>
+        </button>
+        <button id="notification-btn" class="p-2 rounded-full hover:bg-gray-100 relative">
+          <i class="fa fa-bell-o text-gray-600"></i>
+          <span id="notification-badge" class="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center hidden">0</span>
+        </button>
+        <button id="install-btn" class="hidden bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors">
+          <i class="fa fa-download mr-2"></i> Install
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-bg min-h-screen flex items-center pt-16">
+    <div class="container mx-auto px-4 py-16">
+      <div class="max-w-3xl mx-auto text-center">
+        <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6ff112048c4b4df4bf823a3f2be33c76~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649636&x-signature=PELt4DSgXQjoZmI8YVCqfBfqp4A%3D" alt="PWA Logo" class="h-32 w-32 mx-auto mb-8 animate-fade-in">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white text-shadow animate-slide-up">Welcome to PWA Example</h1>
+        <p class="text-xl md:text-2xl mb-8 text-white text-shadow animate-slide-up" style="animation-delay: 0.2s;">A Progressive Web App that can be installed on your device</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 animate-slide-up" style="animation-delay: 0.4s;">
+          <button id="demo-btn" class="bg-white text-primary px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors shadow-lg">
+            <i class="fa fa-play-circle mr-2"></i> See Demo
+          </button>
+          <button id="features-btn" class="bg-primary bg-opacity-20 text-white border border-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-30 transition-colors">
+            <i class="fa fa-list-ul mr-2"></i> View Features
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">PWA Features</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="feature-card bg-white rounded-xl shadow-md p-6 card-hover">
+          <div class="feature-icon h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <i class="fa fa-download text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-center mb-4">Installable</h3>
+          <p class="text-gray-600 text-center">Add this app to your home screen with a single tap, no app store required.</p>
+        </div>
+        
+        <!-- Feature 2 -->
+        <div class="feature-card bg-white rounded-xl shadow-md p-6 card-hover">
+          <div class="feature-icon h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <i class="fa fa-wifi text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-center mb-4">Offline Access</h3>
+          <p class="text-gray-600 text-center">Use the app even when you're not connected to the internet.</p>
+        </div>
+        
+        <!-- Feature 3 -->
+        <div class="feature-card bg-white rounded-xl shadow-md p-6 card-hover">
+          <div class="feature-icon h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <i class="fa fa-bell text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-center mb-4">Push Notifications</h3>
+          <p class="text-gray-600 text-center">Receive important updates and reminders even when the app is closed.</p>
+        </div>
+        
+        <!-- Feature 4 -->
+        <div class="feature-card bg-white rounded-xl shadow-md p-6 card-hover">
+          <div class="feature-icon h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <i class="fa fa-refresh text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-center mb-4">Background Sync</h3>
+          <p class="text-gray-600 text-center">Sync your data automatically when you regain internet connection.</p>
+        </div>
+        
+        <!-- Feature 5 -->
+        <div class="feature-card bg-white rounded-xl shadow-md p-6 card-hover">
+          <div class="feature-icon h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <i class="fa fa-mobile text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-center mb-4">Responsive Design</h3>
+          <p class="text-gray-600 text-center">Works seamlessly on any device, from phones to tablets to desktops.</p>
+        </div>
+        
+        <!-- Feature 6 -->
+        <div class="feature-card bg-white rounded-xl shadow-md p-6 card-hover">
+          <div class="feature-icon h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <i class="fa fa-lock text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-center mb-4">Secure</h3>
+          <p class="text-gray-600 text-center">Served over HTTPS to ensure your data is always protected.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Section -->
+  <section id="demo" class="py-20 bg-gray-50 hidden">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">PWA Demo</h2>
+      
+      <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Demo Tabs -->
+        <div class="flex border-b">
+          <button class="demo-tab active flex-1 py-4 px-6 text-center font-medium text-primary border-b-2 border-primary">
+            Offline Mode
+          </button>
+          <button class="demo-tab flex-1 py-4 px-6 text-center font-medium text-gray-500 hover:text-gray-700">
+            Notifications
+          </button>
+          <button class="demo-tab flex-1 py-4 px-6 text-center font-medium text-gray-500 hover:text-gray-700">
+            Background Sync
+          </button>
+        </div>
+        
+        <!-- Demo Content -->
+        <div class="p-6">
+          <!-- Offline Mode Demo -->
+          <div id="offline-demo" class="demo-content">
+            <div class="text-center mb-8">
+              <h3 class="text-2xl font-semibold mb-4">Test Offline Mode</h3>
+              <p class="text-gray-600 mb-6">This demo shows how the app works when you're not connected to the internet.</p>
+              
+              <div class="flex justify-center mb-8">
+                <div id="connection-status" class="flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full">
+                  <span class="h-3 w-3 bg-green-500 rounded-full mr-2"></span>
+                  <span>Online</span>
+                </div>
+              </div>
+              
+              <button id="toggle-network" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition-colors">
+                <i class="fa fa-wifi mr-2"></i> Go Offline
+              </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-medium mb-2">Cached Resources</h4>
+                <ul id="cached-resources" class="text-sm text-gray-600">
+                  <li class="mb-1"><i class="fa fa-check-circle text-green-500 mr-2"></i> Index HTML</li>
+                  <li class="mb-1"><i class="fa fa-check-circle text-green-500 mr-2"></i> CSS Styles</li>
+                  <li class="mb-1"><i class="fa fa-check-circle text-green-500 mr-2"></i> JavaScript</li>
+                  <li class="mb-1"><i class="fa fa-check-circle text-green-500 mr-2"></i> Images</li>
+                  <li class="mb-1"><i class="fa fa-check-circle text-green-500 mr-2"></i> Icons</li>
+                </ul>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-medium mb-2">Offline Functionality</h4>
+                <ul class="text-sm text-gray-600">
+                  <li class="mb-1"><i class="fa fa-check-circle text-green-500 mr-2"></i> View Content</li>
+                  <li class="mb-1"><i class="fa fa-check-circle text-green-500 mr-2"></i> Use Basic Features</li>
+                  <li class="mb-1"><i class="fa fa-check-circle text-green-500 mr-2"></i> Save Data Locally</li>
+                  <li class="mb-1"><i class="fa fa-times-circle text-red-500 mr-2"></i> Sync with Server</li>
+                  <li class="mb-1"><i class="fa fa-times-circle text-red-500 mr-2"></i> Load New Content</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Notifications Demo -->
+          <div id="notifications-demo" class="demo-content hidden">
+            <div class="text-center mb-8">
+              <h3 class="text-2xl font-semibold mb-4">Test Push Notifications</h3>
+              <p class="text-gray-600 mb-6">This demo shows how push notifications work in the app.</p>
+              
+              <button id="request-notification" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition-colors mb-4">
+                <i class="fa fa-bell mr-2"></i> Enable Notifications
+              </button>
+              
+              <button id="send-notification" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <i class="fa fa-paper-plane mr-2"></i> Send Test Notification
+              </button>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-medium mb-2">Notification History</h4>
+              <div id="notification-history" class="text-sm text-gray-600">
+                <p class="text-gray-400 italic">No notifications received yet.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Background Sync Demo -->
+          <div id="sync-demo" class="demo-content hidden">
+            <div class="text-center mb-8">
+              <h3 class="text-2xl font-semibold mb-4">Test Background Sync</h3>
+              <p class="text-gray-600 mb-6">This demo shows how background sync works when you regain internet connection.</p>
+              
+              <div class="flex justify-center mb-8">
+                <div id="sync-status" class="flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full">
+                  <span class="h-3 w-3 bg-green-500 rounded-full mr-2"></span>
+                  <span>Online</span>
+                </div>
+              </div>
+              
+              <button id="add-sync-data" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition-colors mb-4">
+                <i class="fa fa-plus-circle mr-2"></i> Add Sync Data
+              </button>
+              
+              <button id="trigger-sync" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <i class="fa fa-refresh mr-2"></i> Trigger Sync
+              </button>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-medium mb-2">Pending Sync Data</h4>
+              <div id="sync-data" class="text-sm text-gray-600">
+                <p class="text-gray-400 italic">No pending sync data.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Install Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">How to Install</h2>
+      
+      <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Step 1 -->
+          <div class="bg-white rounded-xl shadow-md p-6 text-center">
+            <div class="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <span class="text-xl font-bold text-primary">1</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-4">Tap the Share Button</h3>
+            <p class="text-gray-600">On your mobile device, tap the share button in your browser.</p>
+          </div>
+          
+          <!-- Step 2 -->
+          <div class="bg-white rounded-xl shadow-md p-6 text-center">
+            <div class="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <span class="text-xl font-bold text-primary">2</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-4">Select "Add to Home Screen"</h3>
+            <p class="text-gray-600">Look for the option to add the app to your home screen.</p>
+          </div>
+          
+          <!-- Step 3 -->
+          <div class="bg-white rounded-xl shadow-md p-6 text-center">
+            <div class="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <span class="text-xl font-bold text-primary">3</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-4">Tap "Add"</h3>
+            <p class="text-gray-600">Confirm by tapping "Add" and the app will appear on your home screen.</p>
+          </div>
+        </div>
+        
+        <div class="mt-12 bg-blue-50 rounded-xl p-6 text-center">
+          <h3 class="text-xl font-semibold mb-4">Or Use the Install Button</h3>
+          <p class="text-gray-600 mb-6">If you see the install button in the address bar or below, simply tap it to install the app.</p>
+          
+          <div id="install-prompt" class="install-prompt hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-4 flex items-center space-x-4 z-50">
+            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6ff112048c4b4df4bf823a3f2be33c76~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649636&x-signature=PELt4DSgXQjoZmI8YVCqfBfqp4A%3D" alt="PWA Logo" class="h-10 w-10">
+            <div class="text-left">
+              <p class="font-medium">Add PWA Example to your home screen</p>
+              <p class="text-sm text-gray-500">Get faster access to the app</p>
+            </div>
+            <button id="prompt-install-btn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors">
+              Add
+            </button>
+            <button id="prompt-close-btn" class="text-gray-400 hover:text-gray-600">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-6 md:mb-0">
+          <div class="flex items-center space-x-2">
+            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6ff112048c4b4df4bf823a3f2be33c76~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649636&x-signature=PELt4DSgXQjoZmI8YVCqfBfqp4A%3D" alt="PWA Logo" class="h-8 w-8">
+            <span class="text-xl font-bold">PWA Example</span>
+          </div>
+          <p class="text-gray-400 mt-2">A Progressive Web App example</p>
+        </div>
+        
+        <div class="flex space-x-6">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">
+            <i class="fa fa-github text-xl"></i>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">
+            <i class="fa fa-twitter text-xl"></i>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">
+            <i class="fa fa-linkedin text-xl"></i>
+          </a>
+        </div>
+      </div>
+      
+      <hr class="border-gray-700 my-8">
+      
+      <div class="text-center text-gray-400">
+        <p>&copy; 2025 PWA Example. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Permission Dialog -->
+  <div id="notification-dialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl shadow-lg p-6 max-w-md w-full mx-4">
+      <div class="text-center mb-6">
+        <div class="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+          <i class="fa fa-bell text-2xl text-primary"></i>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">Enable Notifications</h3>
+        <p class="text-gray-600">Get important updates and reminders from the app.</p>
+      </div>
+      
+      <div class="flex space-x-4">
+        <button id="notification-deny" class="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+          Not Now
+        </button>
+        <button id="notification-allow" class="flex-1 bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-secondary transition-colors">
+          Allow
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // DOM Elements
+    const installBtn = document.getElementById('install-btn');
+    const installPrompt = document.getElementById('install-prompt');
+    const promptInstallBtn = document.getElementById('prompt-install-btn');
+    const promptCloseBtn = document.getElementById('prompt-close-btn');
+    const demoBtn = document.getElementById('demo-btn');
+    const featuresBtn = document.getElementById('features-btn');
+    const demoSection = document.getElementById('demo');
+    const featuresSection = document.getElementById('features');
+    const demoTabs = document.querySelectorAll('.demo-tab');
+    const demoContents = document.querySelectorAll('.demo-content');
+    const toggleNetworkBtn = document.getElementById('toggle-network');
+    const connectionStatus = document.getElementById('connection-status');
+    const requestNotificationBtn = document.getElementById('request-notification');
+    const sendNotificationBtn = document.getElementById('send-notification');
+    const notificationHistory = document.getElementById('notification-history');
+    const notificationDialog = document.getElementById('notification-dialog');
+    const notificationAllow = document.getElementById('notification-allow');
+    const notificationDeny = document.getElementById('notification-deny');
+    const notificationBadge = document.getElementById('notification-badge');
+    const themeToggle = document.getElementById('theme-toggle');
+    const addSyncDataBtn = document.getElementById('add-sync-data');
+    const triggerSyncBtn = document.getElementById('trigger-sync');
+    const syncStatus = document.getElementById('sync-status');
+    const syncData = document.getElementById('sync-data');
+    
+    // Variables
+    let deferredPrompt;
+    let isOnline = true;
+    let isDarkMode = false;
+    let syncItems = [];
+    let notificationCount = 0;
+    
+    // Initialize PWA
+    function initPWA() {
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then((registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
+            
+            // Check for new service worker
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              console.log('New Service Worker found');
+              
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed') {
+                  console.log('New Service Worker installed');
+                  // Show update notification to user
+                }
+              });
+            });
+          })
+          .catch((error) => {
+            console.error('Service Worker registration failed:', error);
+          });
+      }
+      
+      // Listen for beforeinstallprompt event
+      window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('beforeinstallprompt event fired');
+        
+        // Prevent the browser's default install prompt
+        e.preventDefault();
+        
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        
+        // Show install button
+        installBtn.classList.remove('hidden');
+        
+        // Show install prompt after a delay
+        setTimeout(() => {
+          installPrompt.classList.remove('hidden');
+        }, 3000);
+      });
+      
+      // Listen for appinstalled event
+      window.addEventListener('appinstalled', (e) => {
+        console.log('App installed successfully');
+        
+        // Hide install button and prompt
+        installBtn.classList.add('hidden');
+        installPrompt.classList.add('hidden');
+        
+        // Show success notification
+        showNotification('App Installed', 'The app has been added to your home screen.');
+      });
+      
+      // Check if app is running as PWA
+      if (window.matchMedia('(display-mode: standalone)').matches || 
+          window.navigator.standalone === true) {
+        console.log('App is running as PWA');
+        
+        // Hide install button and prompt
+        installBtn.classList.add('hidden');
+        installPrompt.classList.add('hidden');
+      }
+      
+      // Check network status
+      checkNetworkStatus();
+      window.addEventListener('online', checkNetworkStatus);
+      window.addEventListener('offline', checkNetworkStatus);
+      
+      // Initialize IndexedDB for offline data storage
+      initIndexedDB();
+    }
+    
+    // Check network status
+    function checkNetworkStatus() {
+      isOnline = navigator.onLine;
+      
+      if (isOnline) {
+        connectionStatus.innerHTML = '<span class="h-3 w-3 bg-green-500 rounded-full mr-2"></span><span>Online</span>';
+        connectionStatus.className = 'flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full';
+        toggleNetworkBtn.innerHTML = '<i class="fa fa-wifi mr-2"></i> Go Offline';
+        syncStatus.innerHTML = '<span class="h-3 w-3 bg-green-500 rounded-full mr-2"></span><span>Online</span>';
+        syncStatus.className = 'flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full';
+        
+        // Enable sync button if there are sync items
+        triggerSyncBtn.disabled = syncItems.length === 0;
+        
+        // Try to sync pending data
+        if (syncItems.length > 0) {
+          syncPendingData();
+        }
+      } else {
+        connectionStatus.innerHTML = '<span class="h-3 w-3 bg-red-500 rounded-full mr-2"></span><span>Offline</span>';
+        connectionStatus.className = 'flex items-center bg-red-100 text-red-800 px-4 py-2 rounded-full';
+        toggleNetworkBtn.innerHTML = '<i class="fa fa-refresh mr-2"></i> Go Online';
+        syncStatus.innerHTML = '<span class="h-3 w-3 bg-red-500 rounded-full mr-2"></span><span>Offline</span>';
+        syncStatus.className = 'flex items-center bg-red-100 text-red-800 px-4 py-2 rounded-full';
+        
+        // Enable sync button if there are sync items
+        triggerSyncBtn.disabled = syncItems.length === 0;
+      }
+    }
+    
+    // Toggle network status (for demo purposes)
+    function toggleNetworkStatus() {
+      // This is just a visual demo, it doesn't actually disable the network
+      isOnline = !isOnline;
+      
+      if (isOnline) {
+        connectionStatus.innerHTML = '<span class="h-3 w-3 bg-green-500 rounded-full mr-2"></span><span>Online</span>';
+        connectionStatus.className = 'flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full';
+        toggleNetworkBtn.innerHTML = '<i class="fa fa-wifi mr-2"></i> Go Offline';
+        
+        // Enable sync button if there are sync items
+        triggerSyncBtn.disabled = syncItems.length === 0;
+        
+        // Try to sync pending data
+        if (syncItems.length > 0) {
+          syncPendingData();
+        }
+      } else {
+        connectionStatus.innerHTML = '<span class="h-3 w-3 bg-red-500 rounded-full mr-2"></span><span>Offline</span>';
+        connectionStatus.className = 'flex items-center bg-red-100 text-red-800 px-4 py-2 rounded-full';
+        toggleNetworkBtn.innerHTML = '<i class="fa fa-refresh mr-2"></i> Go Online';
+        
+        // Enable sync button if there are sync items
+        triggerSyncBtn.disabled = syncItems.length === 0;
+      }
+    }
+    
+    // Install app
+    function installApp() {
+      if (deferredPrompt) {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          } else {
+            console.log('User dismissed the install prompt');
+          }
+          
+          // Clear the deferredPrompt variable
+          deferredPrompt = null;
+          
+          // Hide install button and prompt
+          installBtn.classList.add('hidden');
+          installPrompt.classList.add('hidden');
+        });
+      }
+    }
+    
+    // Request notification permission
+    function requestNotificationPermission() {
+      notificationDialog.classList.remove('hidden');
+    }
+    
+    // Allow notifications
+    function allowNotifications() {
+      notificationDialog.classList.add('hidden');
+      
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted');
+          sendNotificationBtn.disabled = false;
+          
+          // Show welcome notification
+          showNotification('Notifications Enabled', 'You will receive updates and reminders.');
+        } else {
+          console.log('Notification permission denied');
+          sendNotificationBtn.disabled = true;
+        }
+      });
+    }
+    
+    // Deny notifications
+    function denyNotifications() {
+      notificationDialog.classList.add('hidden');
+      sendNotificationBtn.disabled = true;
+    }
+    
+    // Show notification
+    function showNotification(title, body) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        const notification = new Notification(title, {
+          body: body,
+          icon: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6ff112048c4b4df4bf823a3f2be33c76~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649636&x-signature=PELt4DSgXQjoZmI8YVCqfBfqp4A%3D'
+        });
+        
+        // Add to notification history
+        addToNotificationHistory(title, body);
+        
+        // Increment notification count
+        notificationCount++;
+        updateNotificationBadge();
+        
+        // Close notification after 5 seconds
+        setTimeout(() => {
+          notification.close();
+        }, 5000);
+      }
+    }
+    
+    // Add to notification history
+    function addToNotificationHistory(title, body) {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+      
+      const notificationItem = document.createElement('div');
+      notificationItem.className = 'p-3 border-b border-gray-100 last:border-0';
+      notificationItem.innerHTML = `
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="font-medium">${title}</p>
+            <p class="text-gray-500 text-sm">${body}</p>
+          </div>
+          <span class="text-xs text-gray-400">${timeString}</span>
+        </div>
+      `;
+      
+      if (notificationHistory.querySelector('.text-gray-400')) {
+        notificationHistory.innerHTML = '';
+      }
+      
+      notificationHistory.prepend(notificationItem);
+    }
+    
+    // Update notification badge
+    function updateNotificationBadge() {
+      if (notificationCount > 0) {
+        notificationBadge.textContent = notificationCount;
+        notificationBadge.classList.remove('hidden');
+      } else {
+        notificationBadge.classList.add('hidden');
+      }
+    }
+    
+    // Toggle theme
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+        themeToggle.innerHTML = '<i class="fa fa-sun-o text-yellow-400"></i>';
+        
+        // Apply dark mode styles
+        document.body.classList.add('bg-gray-900', 'text-white');
+        document.body.classList.remove('bg-gray-50', 'text-gray-800');
+        
+        // Save preference to localStorage
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        themeToggle.innerHTML = '<i class="fa fa-moon-o text-gray-600"></i>';
+        
+        // Remove dark mode styles
+        document.body.classList.remove('bg-gray-900', 'text-white');
+        document.body.classList.add('bg-gray-50', 'text-gray-800');
+        
+        // Save preference to localStorage
+        localStorage.setItem('theme', 'light');
+      }
+    }
+    
+    // Initialize IndexedDB
+    function initIndexedDB() {
+      // In a real app, this would initialize IndexedDB for offline data storage
+      console.log('IndexedDB initialized');
+    }
+    
+    // Add sync data
+    function addSyncData() {
+      const now = new Date();
+      const timeString = now.toLocaleString();
+      
+      const item = {
+        id: Date.now(),
+        data: `Sample data added at ${timeString}`,
+        timestamp: now.getTime()
+      };
+      
+      syncItems.push(item);
+      
+      updateSyncDataList();
+      
+      // Enable sync button
+      triggerSyncBtn.disabled = false;
+      
+      // Show notification
+      showNotification('Data Saved', 'Your data has been saved and will sync when you are online.');
+    }
+    
+    // Update sync data list
+    function updateSyncDataList() {
+      if (syncItems.length === 0) {
+        syncData.innerHTML = '<p class="text-gray-400 italic">No pending sync data.</p>';
+        return;
+      }
+      
+      syncData.innerHTML = '';
+      
+      syncItems.forEach((item) => {
+        const syncItem = document.createElement('div');
+        syncItem.className = 'p-3 border-b border-gray-100 last:border-0';
+        syncItem.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="font-medium">${item.data}</p>
+            </div>
+            <span class="text-xs text-gray-400">Pending</span>
+          </div>
+        `;
+        
+        syncData.appendChild(syncItem);
+      });
+    }
+    
+    // Sync pending data
+    function syncPendingData() {
+      if (isOnline && syncItems.length > 0) {
+        // Show syncing status
+        syncStatus.innerHTML = '<span class="h-3 w-3 bg-yellow-500 rounded-full mr-2 animate-pulse"></span><span>Syncing...</span>';
+        syncStatus.className = 'flex items-center bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full';
+        
+        // Simulate sync delay
+        setTimeout(() => {
+          // Clear sync items
+          syncItems = [];
+          
+          // Update UI
+          updateSyncDataList();
+          triggerSyncBtn.disabled = true;
+          
+          // Show success status
+          syncStatus.innerHTML = '<span class="h-3 w-3 bg-green-500 rounded-full mr-2"></span><span>Sync Complete</span>';
+          syncStatus.className = 'flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full';
+          
+          // Show notification
+          showNotification('Sync Complete', 'Your data has been synced successfully.');
+          
+          // Reset status after 3 seconds
+          setTimeout(() => {
+            checkNetworkStatus();
+          }, 3000);
+        }, 1500);
+      }
+    }
+    
+    // Event Listeners
+    installBtn.addEventListener('click', installApp);
+    promptInstallBtn.addEventListener('click', installApp);
+    promptCloseBtn.addEventListener('click', () => {
+      installPrompt.classList.add('hidden');
+    });
+    
+    demoBtn.addEventListener('click', () => {
+      demoSection.classList.remove('hidden');
+      featuresSection.classList.add('hidden');
+      demoSection.scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    featuresBtn.addEventListener('click', () => {
+      featuresSection.classList.remove('hidden');
+      demoSection.classList.add('hidden');
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    demoTabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        demoTabs.forEach((t) => {
+          t.classList.remove('active', 'text-primary', 'border-b-2', 'border-primary');
+          t.classList.add('text-gray-500');
+        });
+        
+        // Add active class to clicked tab
+        tab.classList.add('active', 'text-primary', 'border-b-2', 'border-primary');
+        tab.classList.remove('text-gray-500');
+        
+        // Hide all demo contents
+        demoContents.forEach((content) => {
+          content.classList.add('hidden');
+        });
+        
+        // Show selected demo content
+        demoContents[index].classList.remove('hidden');
+      });
+    });
+    
+    toggleNetworkBtn.addEventListener('click', toggleNetworkStatus);
+    
+    requestNotificationBtn.addEventListener('click', requestNotificationPermission);
+    sendNotificationBtn.addEventListener('click', () => {
+      showNotification('Test Notification', 'This is a test notification from the PWA example.');
+    });
+    
+    notificationAllow.addEventListener('click', allowNotifications);
+    notificationDeny.addEventListener('click', denyNotifications);
+    
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    addSyncDataBtn.addEventListener('click', addSyncData);
+    triggerSyncBtn.addEventListener('click', syncPendingData);
+    
+    // Check for saved theme preference
+    if (localStorage.getItem('theme') === 'dark') {
+      toggleTheme();
+    }
+    
+    // Initialize PWA when DOM is loaded
+    document.addEventListener('DOMContentLoaded', initPWA);
+  </script>
+</body>
+</html>
