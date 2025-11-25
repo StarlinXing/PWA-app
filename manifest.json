@@ -26,5 +26,13 @@
             "type": "image/png",
             "form_factor": "wide" 
         }
+    ],
+    "categories": ["education", "utilities", "productivity"],
+    "shortcuts": [
+        {
+            "name": "快速啟動",
+            "url": "./index.html?shortcut=start",
+            "description": "直接打開應用程式主頁"
+        }
     ]
 }
