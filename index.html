@@ -35,6 +35,52 @@
         <p>網路狀態: <span id="online-status">檢查中...</span></p>
     </div>
 
+    <button id="installButton" style="display:none; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    一鍵添加到桌面！
+</button>
+
+<script>
+    let deferredPrompt; // 用來儲存瀏覽器事件的變數
+    const installButton = document.getElementById('installButton');
+
+    // 1. 捕捉瀏覽器的安裝提示事件
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // 阻止瀏覽器顯示其預設的自動提示
+        e.preventDefault(); 
+        
+        // 儲存這個事件，以便之後可以手動觸發
+        deferredPrompt = e; 
+        
+        // 顯示您的自定義按鈕
+        installButton.style.display = 'block'; 
+        
+        console.log('beforeinstallprompt 事件已捕捉，按鈕顯示');
+    });
+
+    // 2. 監聽自定義按鈕的點擊事件
+    installButton.addEventListener('click', (e) => {
+        if (deferredPrompt) {
+            // 隱藏自定義按鈕
+            installButton.style.display = 'none';
+            
+            // 觸發瀏覽器儲存的原生安裝提示
+            deferredPrompt.prompt(); 
+            
+            // 監聽用戶的選擇
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('用戶接受安裝 PWA');
+                } else {
+                    console.log('用戶拒絕安裝 PWA');
+                }
+                deferredPrompt = null;
+            });
+        }
+    });
+
+    // ... [您原有的 Service Worker 註冊代碼] ...
+</script>
+
     <script>
         // === PWA Service Worker 註冊 ===
         if ('serviceWorker' in navigator) {
