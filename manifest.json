@@ -1,25 +1,22 @@
 {
-  "name": "PWA Example",
-  "short_name": "PWA App",
-  "description": "A Progressive Web App example that can be installed on your device",
-  "start_url": "/index.html",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2196f3",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6ff112048c4b4df4bf823a3f2be33c76~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649636&x-signature=PELt4DSgXQjoZmI8YVCqfBfqp4A%3D",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6ff112048c4b4df4bf823a3f2be33c76~tplv-a9rns2rl98-image.image?rcl=20251125160022B4FD00775976597CAC78&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766649636&x-signature=PELt4DSgXQjoZmI8YVCqfBfqp4A%3D",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "splash_pages": null
+    "name": "Gemini PWA 範例",
+    "short_name": "PWA 測試",
+    "description": "這是我的第一個漸進式網頁應用程式測試。",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#4CAF50",
+    "background_color": "#ffffff",
+    "icons": [
+        {
+            "src": "images/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "images/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
 }
