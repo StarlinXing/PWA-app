@@ -19,7 +19,6 @@
             "type": "image/png"
         }
     ],
-    // *** 新增以下截圖屬性 ***
     "screenshots": [
         {
             "src": "./images/screenshot-wide.png",
