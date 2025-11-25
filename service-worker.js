@@ -1,11 +1,13 @@
 const CACHE_NAME = 'gemini-pwa-cache-v1';
 const urlsToCache = [
-    '/', // 根目錄
-    '/index.html',
-    '/manifest.json',
-    // 記得將您的圖標文件加入快取
-    '/images/icon-192x192.png',
-    '/images/icon-512x512.png'
+    // 修正: 將絕對路徑（以 / 開頭）改為相對路徑，或加上子資料夾名稱
+    './', // 代表當前目錄下的 index.html
+    './index.html',
+    './manifest.json',
+    
+    // 圖片路徑修正為相對路徑
+    './images/icon-192x192.png',
+    './images/icon-512x512.png'
 ];
 
 // === 1. 安裝階段 (Install) ===
